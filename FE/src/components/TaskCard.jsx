@@ -28,7 +28,7 @@ const TaskCard = ({ task, index }) => {
                     variant="ghost"
                     size="icon"
                     className={cn(
-                        "flex-shrink-0 size-8 rounder-full transition-all duration-200",
+                        "shrink-0 size-8 rounder-full transition-all duration-200",
                         task.status === "completed"
                             ? "text-success hover:text-success/80"
                             : "text-muted-foreground hover:text-primary",
@@ -92,7 +92,7 @@ const TaskCard = ({ task, index }) => {
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="flex-shrink-0 transition-colors size-8 text-muted-foreground hover:text-info"
+                        className="shrink-0 transition-colors size-8 text-muted-foreground hover:text-info"
                     >
                         <SquarePen className="size-4" />
                     </Button>
@@ -100,7 +100,7 @@ const TaskCard = ({ task, index }) => {
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="flex-shrink-0 transition-colors size-8 text-muted-foreground hover:text-destructive"
+                        className="shrink-0 transition-colors size-8 text-muted-foreground hover:text-destructive"
                     >
                         <Trash2 className="size-4" />
                     </Button>

@@ -17,10 +17,6 @@ const HomePage = () => {
 
     const [filter, setFilter] = useState("all"); // State để lưu trữ bộ lọc hiện tại (tất cả, đang làm, đã hoàn thành)
 
-    useEffect(() => {
-        fetchTasks(); //chạy 1 lần duy nhất khi component được render
-    }, []); // useEffect để gọi API khi component được render lần đầu tiên
-
     // gọi API lấy ds công việc
     const fetchTasks = async () => {
         try {
@@ -35,6 +31,15 @@ const HomePage = () => {
             );
         }
     };
+
+    useEffect(() => {
+        fetchTasks(); //chạy 1 lần duy nhất khi component được render
+    }, []);
+
+    const handleTaskChanged = () => {
+        fetchTasks(); // Gọi lại API để cập nhật danh sách công việc sau khi có sự thay đổi (thêm, sửa, xóa)
+    };
+
     // biến filteredTasks để lưu trữ ds công việc đã được lọc theo bộ lọc hiện tại, sẽ được truyền vào component TaskList để hiển thị
     const filteredTasks = taskBuffer.filter((task) => {
         switch (filter) {
@@ -62,7 +67,7 @@ const HomePage = () => {
                     {/* Dau trang */}
                     <Header />
                     {/* Tao nhiem vu moi */}
-                    <AddTask />
+                    <AddTask handleNewTaskAdded={handleTaskChanged} />
                     {/* Thong ke va bo loc */}
                     <StatsAndFilters
                         filter={filter}
