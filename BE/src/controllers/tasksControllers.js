@@ -1,5 +1,6 @@
 import Task from "../models/Tasks.js";
 
+// Lấy tất cả các task
 export const getAllTasks = async (req, res) => {
     try {
         const tasks = await Task.find().sort({ createdAt: -1 }); // Sắp xếp theo createdAt giảm dần để hiển thị task mới nhất ở trên cùng
@@ -10,6 +11,7 @@ export const getAllTasks = async (req, res) => {
     }
 };
 
+// Tạo 1 task mới
 export const createTasks = async (req, res) => {
     try {
         const { title } = req.body;
@@ -24,6 +26,7 @@ export const createTasks = async (req, res) => {
     }
 };
 
+// Cập nhật 1 task
 export const updateTasks = async (req, res) => {
     try {
         const { title, status, completeAt } = req.body;
@@ -44,6 +47,7 @@ export const updateTasks = async (req, res) => {
     }
 };
 
+// Xóa 1 task
 export const deleteTasks = async (req, res) => {
     try {
         const deleteTask = await Task.findByIdAndDelete(req.params.id);
