@@ -43,6 +43,32 @@ const TaskCard = ({ task, index, handleTaskChanged }) => {
         }
     };
 
+    const toggleTaskCompleteButton = async () => {
+        try {
+            if (task.status === "active") {
+                await api.put(`/tasks/${task._id}`, {
+                    status: "completed",
+                    completeAt: new Date().toISOString(), // Ghi lại thời gian hoàn thành
+                });
+                toast.success(`Công việc ${task.title} đã hoàn thành!`);
+            } else {
+                await api.put(`/tasks/${task._id}`, {
+                    status: "active",
+                    completeAt: null, // Xóa thời gian hoàn thành khi chuyển về active
+                });
+                toast.success(
+                    `Công việc ${task.title} đã được chuyển về đang làm!`,
+                );
+            }
+            handleTaskChanged();
+        } catch (error) {
+            console.error("Lỗi khi cập nhật trạng thái công việc:", error);
+            toast.error(
+                "Không thể cập nhật trạng thái công việc. Vui lòng thử lại.",
+            ); // Hiển thị thông báo lỗi
+        }
+    };
+
     const handleKeyPress = (e) => {
         if (e.key === "Enter") {
             updateTask();
@@ -68,6 +94,7 @@ const TaskCard = ({ task, index, handleTaskChanged }) => {
                             ? "text-success hover:text-success/80"
                             : "text-muted-foreground hover:text-primary",
                     )}
+                    onClick={toggleTaskCompleteButton}
                 >
                     {task.status === "completed" ? (
                         <CheckCircle2 className="size-5" />
@@ -111,7 +138,7 @@ const TaskCard = ({ task, index, handleTaskChanged }) => {
                             {/* Thêm hàm toLocaleString để đổi thành ngày giờ Việt Nam */}
                             {new Date(task.createdAt).toLocaleString()}
                         </span>
-                        {task.completedAt && (
+                        {task.completeAt && (
                             <>
                                 <span className="text-xs text-muted-foreground">
                                     {" "}
@@ -119,9 +146,7 @@ const TaskCard = ({ task, index, handleTaskChanged }) => {
                                 </span>
                                 <Calendar className="size-3 text-muted-foreground" />
                                 <span className="text-xs text-muted-foreground">
-                                    {new Date(
-                                        task.completedAt,
-                                    ).toLocaleString()}
+                                    {new Date(task.completeAt).toLocaleString()}
                                 </span>
                             </>
                         )}
