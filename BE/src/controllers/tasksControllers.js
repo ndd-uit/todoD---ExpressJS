@@ -2,11 +2,40 @@ import Task from "../models/Tasks.js";
 
 // Lấy tất cả các task
 export const getAllTasks = async (req, res) => {
+    const { filter = "today" } = req.query; // Lấy tham số filter từ query string, mặc định là 'today'
+    const now = new Date(); // Lấy thời điểm hiện tại
+    let startDate;
+
+    switch (filter) {
+        case "today":
+            startDate = new Date(
+                now.getFullYear(),
+                now.getMonth(),
+                now.getDate(),
+            ); // Bắt đầu từ 00:00:00 của ngày hôm nay
+            break;
+        case "week":
+            const mondayDate =
+                now.getDate() - (now.getDay() - 1) - now.getDay() === 0 ? 7 : 0; // Tính ngày của thứ 2
+            startDate = new Date(now.getFullYear(), now.getMonth(), mondayDate); // Bắt đầu từ 00:00:00 của thứ 2 tuần này
+            break;
+        case "month":
+            startDate = new Date(now.getFullYear(), now.getMonth(), 1); // Bắt đầu từ 00:00:00 của ngày 1 tháng này
+            break;
+        case "all":
+        default:
+            startDate = "null";
+    }
+
+    const query =
+        startDate !== "null" ? { createdAt: { $gte: startDate } } : {}; // Nếu startDate không phải là 'null', thì tạo query để lọc theo createdAt, ngược lại thì query rỗng để lấy tất cả
+
     try {
         //Sử dụng aggregate lấy dữ liệu và sắp xếp cùng lúc để tối ưu hiệu suất khi có nhiều task
         // Nếu chỉ cần lấy tất cả task mà không cần tính toán gì thêm thì có thể dùng find().sort() như trên, nhưng nếu sau này muốn thêm các phép tính phức tạp hơn (ví dụ: đếm số task theo trạng thái, lọc theo ngày tạo, v.v.) thì aggregate sẽ linh hoạt hơn.
         // Sintax: Model.aggregate([ { $facet: { tasks: [ { $sort: { createdAt: -1 } } ] } } ])
         const result = await Task.aggregate([
+            { $match: query },
             {
                 $facet: {
                     tasks: [
@@ -17,7 +46,7 @@ export const getAllTasks = async (req, res) => {
                         { $count: "count" },
                     ],
                     completeCount: [
-                        { $match: { status: "complete" } },
+                        { $match: { status: "completed" } },
                         { $count: "count" },
                     ],
                 },

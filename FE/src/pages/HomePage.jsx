@@ -17,10 +17,12 @@ const HomePage = () => {
 
     const [filter, setFilter] = useState("all"); // State để lưu trữ bộ lọc hiện tại (tất cả, đang làm, đã hoàn thành)
 
+    const [dateQuery, setDateQuery] = useState("today");
+
     // gọi API lấy ds công việc
     const fetchTasks = async () => {
         try {
-            const res = await api.get("/tasks"); // gọi API backend để lấy ds công việc
+            const res = await api.get(`/tasks?filter=${dateQuery}`); // gọi API backend để lấy ds công việc
             setTaskBuffer(res.data.tasks); // hỗ trợ cả response object mới và mảng cũ
             setActiveTaskCount(res.data.activeCount); // Cập nhật số lượng task active
             setCompleteTaskCount(res.data.completeCount); // Cập nhật số lượng task completed
@@ -34,7 +36,7 @@ const HomePage = () => {
 
     useEffect(() => {
         fetchTasks(); //chạy 1 lần duy nhất khi component được render
-    }, []);
+    }, [dateQuery]); // Mỗi khi đổi bộ lọc cần fetch data lại
 
     const handleTaskChanged = () => {
         fetchTasks(); // Gọi lại API để cập nhật danh sách công việc sau khi có sự thay đổi (thêm, sửa, xóa)
@@ -84,7 +86,10 @@ const HomePage = () => {
                     {/* Phan trang va loc theo ngay */}
                     <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
                         <TaskListPagination />
-                        <DateTimeFilter />
+                        <DateTimeFilter
+                            dateQuery={dateQuery}
+                            setDateQuery={setDateQuery}
+                        />
                     </div>
                     {/* Chan trang */}
                     <Footer
