@@ -8,6 +8,7 @@ const StatsAndFilters = ({
     completedTaskCount = 0,
     activeTaskCount = 0,
     filter = "all",
+    setFilter,
 }) => {
     return (
         <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
@@ -36,6 +37,7 @@ const StatsAndFilters = ({
                             key={type}
                             size="sm"
                             className="capitalize"
+                            onClick={() => setFilter(type)} // Khi click vao button thi se goi ham setFilter de cap nhat filter hien tai
                         >
                             <Filter className="size-4" />
                             {FilterType[type]}

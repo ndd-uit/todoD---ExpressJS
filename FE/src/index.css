@@ -19,10 +19,10 @@
         --popover-foreground: 215 28% 27%;
 
         /* Beautiful gradient colors */
-        --primary: 258 89% 65%;
-        --primary-light: 255 92% 76%;
-        --primary-dark: 263 69% 50%;
-        --primary-foreground: 0 0% 100%;
+        --primary: 0 80% 60%; /* đỏ chính */
+        --primary-light: 0 90% 75%; /* đỏ nhạt */
+        --primary-dark: 0 75% 45%; /* đỏ đậm */
+        --primary-foreground: 0 0% 100%; /* chữ trắng */
 
         --secondary: 240 5% 96%;
         --secondary-foreground: 240 6% 10%;
@@ -44,13 +44,12 @@
 
         --border: 214 32% 91%; /* slate-200 */
         --input: 210 40% 96%;
-        --ring: 258 89% 65%;
-
+        --ring: 0 85% 60%;
         /* Gradients */
         --gradient-primary: linear-gradient(
             135deg,
-            hsl(255 92% 76%) 0%,
-            hsl(263 69% 50%) 100%
+            hsl(0, 90%, 68%) 0%,
+            hsl(0, 100%, 49%) 100%
         );
         --gradient-background: linear-gradient(
             135deg,
@@ -71,7 +70,7 @@
         --shadow-lg:
             0 10px 15px -3px hsl(218 36% 18% / 0.1),
             0 4px 6px -4px hsl(218 36% 18% / 0.1);
-        --shadow-glow: 0 0 20px hsl(258 89% 65% / 0.3);
+        --shadow-glow: 0 0 20px hsl(0 85% 60% / 0.3);
 
         /* Transitions */
         --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -106,8 +105,8 @@
         --popover: 222.2 84% 4.9%;
         --popover-foreground: 210 40% 98%;
 
-        --primary: 210 40% 98%;
-        --primary-foreground: 222.2 47.4% 11.2%;
+        --primary: 0 80% 60%;
+        --primary-foreground: 0 0% 100%;
 
         --secondary: 217.2 32.6% 17.5%;
         --secondary-foreground: 210 40% 98%;
@@ -115,23 +114,23 @@
         --muted: 217.2 32.6% 17.5%;
         --muted-foreground: 215 20.2% 65.1%;
 
-        --accent: 217.2 32.6% 17.5%;
-        --accent-foreground: 210 40% 98%;
+        --accent: 0 35% 18%;
+        --accent-foreground: 0 100% 92%;
 
         --destructive: 0 62.8% 30.6%;
         --destructive-foreground: 210 40% 98%;
 
         --border: 217.2 32.6% 17.5%;
         --input: 217.2 32.6% 17.5%;
-        --ring: 212.7 26.8% 83.9%;
+        --ring: 0 85% 65%;
         --sidebar-background: 240 5.9% 10%;
         --sidebar-foreground: 240 4.8% 95.9%;
-        --sidebar-primary: 224.3 76.3% 48%;
+        --sidebar-primary: 0 72% 51%;
         --sidebar-primary-foreground: 0 0% 100%;
         --sidebar-accent: 240 3.7% 15.9%;
         --sidebar-accent-foreground: 240 4.8% 95.9%;
         --sidebar-border: 240 3.7% 15.9%;
-        --sidebar-ring: 217.2 91.2% 59.8%;
+        --sidebar-ring: 0 85% 65%;
     }
 }
 

@@ -3,8 +3,30 @@ import Task from "../models/Tasks.js";
 // Lấy tất cả các task
 export const getAllTasks = async (req, res) => {
     try {
-        const tasks = await Task.find().sort({ createdAt: -1 }); // Sắp xếp theo createdAt giảm dần để hiển thị task mới nhất ở trên cùng
-        res.status(200).json(tasks);
+        //Sử dụng aggregate lấy dữ liệu và sắp xếp cùng lúc để tối ưu hiệu suất khi có nhiều task
+        // Nếu chỉ cần lấy tất cả task mà không cần tính toán gì thêm thì có thể dùng find().sort() như trên, nhưng nếu sau này muốn thêm các phép tính phức tạp hơn (ví dụ: đếm số task theo trạng thái, lọc theo ngày tạo, v.v.) thì aggregate sẽ linh hoạt hơn.
+        // Sintax: Model.aggregate([ { $facet: { tasks: [ { $sort: { createdAt: -1 } } ] } } ])
+        const result = await Task.aggregate([
+            {
+                $facet: {
+                    tasks: [
+                        { $sort: { createdAt: -1 } }, // Sắp xếp theo createdAt giảm dần
+                    ],
+                    activeCount: [
+                        { $match: { status: "active" } },
+                        { $count: "count" },
+                    ],
+                    completeCount: [
+                        { $match: { status: "complete" } },
+                        { $count: "count" },
+                    ],
+                },
+            },
+        ]);
+        const tasks = result[0].tasks; // Mảng các task đã được sắp xếp
+        const activeCount = result[0].activeCount[0]?.count || 0; // Số lượng task active, nếu không có sẽ là 0
+        const completeCount = result[0].completeCount[0]?.count || 0; // Số lượng task complete, nếu không có sẽ là 0
+        res.status(200).json({ tasks, activeCount, completeCount }); // Trả về task và thống kê
     } catch (error) {
         console.error("Lỗi khi gọi getAllTasks:", error);
         res.status(500).json({ message: "Lỗi hệ thống!" });

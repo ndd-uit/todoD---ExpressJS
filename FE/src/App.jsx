@@ -6,7 +6,7 @@ import NotFound from "./pages/NotFound.jsx";
 function App() {
     return (
         <>
-            <Toaster />
+            <Toaster richColors />
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<HomePage />}></Route>

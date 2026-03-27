@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import AddTask from "../components/AddTask";
 import StatsAndFilters from "../components/StatsAndFilters";
@@ -6,8 +6,47 @@ import TaskList from "../components/TaskList";
 import TaskListPagination from "../components/TaskListPagination";
 import DateTimeFilter from "../components/DateTimeFilter";
 import Footer from "../components/Footer";
+import { toast } from "sonner";
+import axios from "axios";
 
 const HomePage = () => {
+    const [taskBuffer, setTaskBuffer] = useState([]); //Buffer: chỗ gom data lại để xử lý tiếp trước khi đưa vào state chính
+
+    const [activeTaskCount, setActiveTaskCount] = useState(0); // Số lượng task active
+    const [completeTaskCount, setCompleteTaskCount] = useState(0); // Số lượng task completed
+
+    const [filter, setFilter] = useState("all"); // State để lưu trữ bộ lọc hiện tại (tất cả, đang làm, đã hoàn thành)
+
+    useEffect(() => {
+        fetchTasks(); //chạy 1 lần duy nhất khi component được render
+    }, []); // useEffect để gọi API khi component được render lần đầu tiên
+
+    // gọi API lấy ds công việc
+    const fetchTasks = async () => {
+        try {
+            const res = await axios.get("http://localhost:3000/api/tasks"); // gọi API backend để lấy ds công việc
+            setTaskBuffer(res.data.tasks); // hỗ trợ cả response object mới và mảng cũ
+            setActiveTaskCount(res.data.activeCount); // Cập nhật số lượng task active
+            setCompleteTaskCount(res.data.completeCount); // Cập nhật số lượng task completed
+        } catch (error) {
+            console.error("Lỗi xảy ra khi truy xuất tasks:", error);
+            toast.error(
+                "Không thể tải danh sách công việc. Vui lòng thử lại sau.",
+            );
+        }
+    };
+    // biến filteredTasks để lưu trữ ds công việc đã được lọc theo bộ lọc hiện tại, sẽ được truyền vào component TaskList để hiển thị
+    const filteredTasks = taskBuffer.filter((task) => {
+        switch (filter) {
+            case "active":
+                return task.status === "active";
+            case "completed":
+                return task.status === "completed";
+            default:
+                return true; // Hiển thị tất cả công việc nếu không có bộ lọc cụ thể
+        }
+    });
+
     return (
         <div className="min-h-screen w-full relative">
             {/* Cotton Candy Sky Gradient - Opposite Direction */}
@@ -25,16 +64,24 @@ const HomePage = () => {
                     {/* Tao nhiem vu moi */}
                     <AddTask />
                     {/* Thong ke va bo loc */}
-                    <StatsAndFilters />
+                    <StatsAndFilters
+                        filter={filter}
+                        setFilter={setFilter}
+                        activeTaskCount={activeTaskCount}
+                        completedTaskCount={completeTaskCount}
+                    />
                     {/* Danh sach nhiem vu */}
-                    <TaskList />
+                    <TaskList filteredTasks={filteredTasks} filter={filter} />
                     {/* Phan trang va loc theo ngay */}
                     <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
                         <TaskListPagination />
                         <DateTimeFilter />
                     </div>
                     {/* Chan trang */}
-                    <Footer />
+                    <Footer
+                        activeTaskCount={activeTaskCount}
+                        completeTaskCount={completeTaskCount}
+                    />
                 </div>
             </div>
         </div>
