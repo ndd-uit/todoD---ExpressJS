@@ -7,7 +7,7 @@ import TaskListPagination from "../components/TaskListPagination";
 import DateTimeFilter from "../components/DateTimeFilter";
 import Footer from "../components/Footer";
 import { toast } from "sonner";
-import axios from "axios";
+import api from "../lib/axios";
 
 const HomePage = () => {
     const [taskBuffer, setTaskBuffer] = useState([]); //Buffer: chỗ gom data lại để xử lý tiếp trước khi đưa vào state chính
@@ -20,7 +20,7 @@ const HomePage = () => {
     // gọi API lấy ds công việc
     const fetchTasks = async () => {
         try {
-            const res = await axios.get("http://localhost:3000/api/tasks"); // gọi API backend để lấy ds công việc
+            const res = await api.get("/tasks"); // gọi API backend để lấy ds công việc
             setTaskBuffer(res.data.tasks); // hỗ trợ cả response object mới và mảng cũ
             setActiveTaskCount(res.data.activeCount); // Cập nhật số lượng task active
             setCompleteTaskCount(res.data.completeCount); // Cập nhật số lượng task completed
@@ -76,7 +76,11 @@ const HomePage = () => {
                         completedTaskCount={completeTaskCount}
                     />
                     {/* Danh sach nhiem vu */}
-                    <TaskList filteredTasks={filteredTasks} filter={filter} />
+                    <TaskList
+                        filteredTasks={filteredTasks}
+                        filter={filter}
+                        handleTaskChanged={handleTaskChanged}
+                    />
                     {/* Phan trang va loc theo ngay */}
                     <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
                         <TaskListPagination />

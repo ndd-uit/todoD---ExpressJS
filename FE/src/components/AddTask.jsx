@@ -3,15 +3,15 @@ import { Card } from "./ui/card";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Plus } from "lucide-react";
-import axios from "axios";
 import { toast } from "sonner";
+import api from "../lib/axios";
 
 const AddTask = ({ handleNewTaskAdded = () => {} }) => {
     const [newTaskTitle, setNewTaskTitle] = useState(""); // State để lưu trữ tiêu đề của task mới
     const addTask = async () => {
         if (newTaskTitle.trim()) {
             try {
-                await axios.post("http://localhost:3000/api/tasks", {
+                await api.post("/tasks", {
                     title: newTaskTitle,
                 }); // Gọi API để thêm task mới vào backend
                 toast.success(`Đã thêm công việc ${newTaskTitle} thành công!`); // Hiển thị thông báo thành công
@@ -48,6 +48,7 @@ const AddTask = ({ handleNewTaskAdded = () => {} }) => {
                     size="xl"
                     className="px-6"
                     onClick={addTask}
+                    disabled={!newTaskTitle.trim()} // Vô hiệu hóa nút thêm khi tiêu đề rỗng
                 >
                     <Plus className="size-5" />
                     Thêm

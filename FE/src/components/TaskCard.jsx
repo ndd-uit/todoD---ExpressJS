@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card } from "./ui/card";
 import { cn } from "../lib/utils";
 import { Button } from "./ui/button";
@@ -11,9 +11,44 @@ import {
     Trash2,
 } from "lucide-react";
 import { Input } from "./ui/input";
+import api from "../lib/axios";
+import { toast } from "sonner";
 
-const TaskCard = ({ task, index }) => {
-    let isEditing = false;
+const TaskCard = ({ task, index, handleTaskChanged }) => {
+    const [isEditing, setIsEditing] = useState(false); // State để theo dõi xem task có đang ở chế độ chỉnh sửa hay không
+    const [updateTaskTitle, setUpdateTaskTitle] = useState(task.title || ""); // State để lưu trữ tiêu đề của task khi đang chỉnh sửa
+
+    const deleteTask = async (taskId) => {
+        try {
+            await api.delete(`/tasks/${taskId}`);
+            toast.success("Đã xóa công việc!");
+            handleTaskChanged();
+        } catch (error) {
+            console.error("Lỗi khi xóa công việc:", error);
+            toast.error("Không thể xóa công việc. Vui lòng thử lại."); // Hiển thị thông báo lỗi
+        }
+    };
+
+    const updateTask = async () => {
+        try {
+            setIsEditing(false); // Thoát chế độ chỉnh sửa
+            await api.put(`/tasks/${task._id}`, {
+                title: updateTaskTitle,
+            });
+            toast.success("Đã cập nhật công việc!");
+            handleTaskChanged(); // Gọi lại hàm để cập nhật lại danh sách công việc
+        } catch (error) {
+            console.error("Lỗi khi cập nhật công việc:", error);
+            toast.error("Không thể cập nhật công việc. Vui lòng thử lại."); // Hiển thị thông báo lỗi
+        }
+    };
+
+    const handleKeyPress = (e) => {
+        if (e.key === "Enter") {
+            updateTask();
+        }
+    };
+
     return (
         <Card
             className={cn(
@@ -47,6 +82,13 @@ const TaskCard = ({ task, index }) => {
                             type="text"
                             placeholder="Cần phải làm gì?"
                             className="flex-1 h-12 text-base border-border/50 focus:border-primary/50 focus:ring-primary/20"
+                            value={updateTaskTitle} // Liên kết giá trị của input với state updateTaskTitle
+                            onChange={(e) => setUpdateTaskTitle(e.target.value)} // Cập nhật state updateTaskTitle khi người dùng nhập vào input
+                            onKeyPress={handleKeyPress}
+                            onBlur={() => {
+                                setIsEditing(false);
+                                setUpdateTaskTitle(task.title || "");
+                            }} // Khi input mất focus, thoát chế độ chỉnh sửa và khôi phục lại tiêu đề ban đầu nếu có
                         />
                     ) : (
                         <p
@@ -93,6 +135,10 @@ const TaskCard = ({ task, index }) => {
                         variant="ghost"
                         size="icon"
                         className="shrink-0 transition-colors size-8 text-muted-foreground hover:text-info"
+                        onClick={() => {
+                            setIsEditing(true);
+                            setUpdateTaskTitle(task.title || ""); // Khi click vào nút edit, chuyển sang chế độ chỉnh sửa và đặt giá trị của input là tiêu đề hiện tại của task
+                        }}
                     >
                         <SquarePen className="size-4" />
                     </Button>
@@ -101,6 +147,7 @@ const TaskCard = ({ task, index }) => {
                         variant="ghost"
                         size="icon"
                         className="shrink-0 transition-colors size-8 text-muted-foreground hover:text-destructive"
+                        onClick={() => deleteTask(task._id)}
                     >
                         <Trash2 className="size-4" />
                     </Button>
