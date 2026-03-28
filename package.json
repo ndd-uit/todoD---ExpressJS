@@ -1,0 +1,21 @@
+{
+    "name": "todod",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "build": "npm install --prefix BE && npm install --prefix FE && npm run build --prefix FE",
+        "start": "npm run start --prefix BE"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ndd-uit/todoD---ExpressJS.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/ndd-uit/todoD---ExpressJS/issues"
+    },
+    "homepage": "https://github.com/ndd-uit/todoD---ExpressJS#readme"
+}
