@@ -10,3 +10,5 @@ export const options = [
     { value: "this_month", label: "Tháng này" },
     { value: "all", label: "Tất cả" },
 ];
+
+export const visibleTaskLimit = 4;
